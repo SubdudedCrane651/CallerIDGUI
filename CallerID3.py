@@ -439,7 +439,7 @@ if __name__=="__main__":
             for n in range(1,20):
                 try:
                     serport="COM"+str(n)
-                    ser = serial.serial(port=serport,baudrate=rate,parity=serial.PARITY_NONE,stopbits=serial.STOPBITS_ONE,bytesize=serial.EIGHTBITS,timeout=1)
+                    ser = serial.Serial(port=serport,baudrate=rate,parity=serial.PARITY_NONE,stopbits=serial.STOPBITS_ONE,bytesize=serial.EIGHTBITS,timeout=1)
                     print("connected to: " + ser.portstr)
                     s(ser)
                     break
