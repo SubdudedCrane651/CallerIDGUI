@@ -1,0 +1,6 @@
+/.venv
+/.vscode
+/build
+/CallerID.db
+/dist
+/__pycache__
