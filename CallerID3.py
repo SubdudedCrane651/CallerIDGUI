@@ -4,10 +4,11 @@ import threading
 import queue
 #pip install pyserial
 import serial,glob,os
-from PySide6.QtWidgets import QApplication, QWidget,QPushButton
+from PySide6.QtWidgets import QApplication, QWidget,QPushButton,QPlainTextEdit
 from PySide6.QtCore import QFile
 from callerid import Ui_Form
 from PySide6 import QtCore, QtGui
+from PySide6.QtGui import QTextCursor
 import sys
 import signal
 import smtplib
@@ -128,6 +129,10 @@ def SaveCall(phonenumber,name):
   text +="Phonenumber: "+str(phonenumber)+"\n\n"
   print(text)
   window.plainTextEdit.insertPlainText(text)
+  cursor = window.plainTextEdit.textCursor()
+  cursor.movePosition(QTextCursor.MoveOperation.End)
+  window.plainTextEdit.setTextCursor(cursor)   
+
   con.close()
   sendmail(phonenumber,name,calldate)
   CreateHtml()
@@ -196,6 +201,10 @@ def  LastCall():
 
     text="Appel de "+name+" au "+phonenumber+"\n"
     window.plainTextEdit.insertPlainText(text)
+    cursor = window.plainTextEdit.textCursor()
+    cursor.movePosition(QTextCursor.MoveOperation.End)
+    window.plainTextEdit.setTextCursor(cursor)   
+
 
 def CreateHtml():
     
@@ -269,6 +278,10 @@ def CreateHtml():
 
     text="""\nCallerID.html created just click on file to view\n"""
     window.plainTextEdit.insertPlainText(text)
+    cursor = window.plainTextEdit.textCursor()
+    cursor.movePosition(QTextCursor.MoveOperation.End)
+    window.plainTextEdit.setTextCursor(cursor)   
+
 
 def Help():
    text="""  test -   To test the program
@@ -282,7 +295,10 @@ def Help():
   lastcall - Last call received        
   speak -    Speak last call
   quit  -    Quit the program\n"""
-   window.plainTextEdit.insertPlainText(text)    
+   window.plainTextEdit.insertPlainText(text) 
+   cursor = window.plainTextEdit.textCursor()
+   cursor.movePosition(QTextCursor.MoveOperation.End)
+   window.plainTextEdit.setTextCursor(cursor)   
 
 def Speak():
    import lastcallspeak
