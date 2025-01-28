@@ -43,6 +43,9 @@ line=""
 global line2
 line2=""
 commands = ["HELP","ADD","EMAIL","SPEAK","TEST","REPORT","QUIT"]
+datetime=["",""]
+global dotext
+dotext=True
 
 def f(thesame):
     globals().update(locals())
@@ -139,7 +142,8 @@ def SaveCall(phonenumber,name):
   init()
 
 def init():
-    ser.write(str("ATZ\r\nAT+VCID=1\r\nWaiting for Call\r\n").encode())
+    #ser.write(str("ATZ\r\nAT+VCID=1\r\nWaiting for Call\r\n").encode())
+    pass
 
 def test():
   ser.write(str(TestTxt).encode())
@@ -183,28 +187,56 @@ def add(info):
   print("\n"+info[0]+" with "+info[1]+" added to checknumbers\n")
   
 
-def  LastCall():
+def  LastCall(dotext):
 
-    con1 = sqlite3.connect("CallerID.db")
+      con1 = sqlite3.connect("CallerID.db")
 
-    cur1 = con1.cursor()
+      cur1 = con1.cursor()
 
-    cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
+      cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
 
-    rows = cur1.fetchall()    
+      rows = cur1.fetchall()    
 
-    for row in rows:
-        name=str(row[1])
-        phonenumber=str(row[2])
+      for row in rows:
+          name=str(row[1])
+          phonenumber=str(row[2])
+          dateandtime=str(row[3])
 
-    con1.close()
+      con1.close()
 
-    text="Appel de "+name+" au "+phonenumber+"\n\n"
-    window.plainTextEdit.insertPlainText(text)
-    cursor = window.plainTextEdit.textCursor()
-    cursor.movePosition(QTextCursor.MoveOperation.End)
-    window.plainTextEdit.setTextCursor(cursor)   
+      if dotext:
 
+          text="Appel de "+name+" au "+phonenumber+" le "+dateandtime+"\n"+"\n"
+          window.plainTextEdit.insertPlainText(text)
+          cursor = window.plainTextEdit.textCursor()
+          cursor.movePosition(QTextCursor.MoveOperation.End)
+          window.plainTextEdit.setTextCursor(cursor) 
+
+      return name,phonenumber,dateandtime
+
+
+def  LastCall_Click():
+
+        con1 = sqlite3.connect("CallerID.db")
+
+        cur1 = con1.cursor()
+
+        cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
+
+        rows = cur1.fetchall()    
+
+        for row in rows:
+            name=str(row[1])
+            phonenumber=str(row[2])
+            dateandtime=str(row[3])
+
+        con1.close()
+
+        text="Appel de "+name+" au "+phonenumber+" le "+dateandtime+"\n"+"\n"
+        window.plainTextEdit.insertPlainText(text)
+        cursor = window.plainTextEdit.textCursor()
+        cursor.movePosition(QTextCursor.MoveOperation.End)
+        window.plainTextEdit.setTextCursor(cursor) 
 
 def CreateHtml():
     
@@ -303,7 +335,7 @@ def Help():
 def Speak():
    import lastcallspeak
    sys.modules.pop('lastcallspeak')
-   LastCall()
+   LastCall(True)
 
 def Report():
    import datatkinter
@@ -314,85 +346,22 @@ def CheckCalls(line):
   print(line.find("QUIT"))
   while line.find("QUIT")==-1:
     try:
-        line = ser.readline().decode('ascii')
-        if line:
-          for com in commands:
-              if line.find(com+"\r\n")==-1:
-                pass
-              else:
-                pass
-                break
+      func=LastCall(False)
+      name=func[0]
+      phonenumber=func[1]
+      datetime[0]=func[2]
+      
+
+      if datetime[0] != datetime[1]:
+        text="Appel de "+name+" au "+phonenumber+" le "+str(datetime[0])+"\n\n"
+        window.plainTextEdit.insertPlainText(text)
+        cursor = window.plainTextEdit.textCursor()
+        cursor.movePosition(QTextCursor.MoveOperation.End)
+        window.plainTextEdit.setTextCursor(cursor)
+        datetime[1]=datetime[0] 
+    except:
+      pass    
     
-    # Uncomment the next line to display the input from the serial port in hex format
-    #     for x in line: print ("%s") % (x.encode('hex')),
-          if line.find("NMBR =")>-1:
-            global phonenumber  
-            phonenumber=line.replace("NMBR = ","")
-            global NMBR
-            NMBR = True
-          elif NMBR and line.find("NAME =")>-1:
-            name=line.replace("NAME = ","")
-            phonenumber=phonenumber.strip("\r\n")
-            name = name.strip("\r\n")
-            name=CheckNumbers(phonenumber,name)
-            SaveCall(phonenumber,name)
-            NMBR=False
-
-          elif line.find("EMAIL")>-1:
-            first=line.split(" ")
-            second=first[1].split(":")
-            #address
-            email[0]=second[0]
-            #host
-            email[1]=second[1]
-            #port
-            email[2]=second[2]
-            #password
-            email[3]=second[3].replace("\r\n","")
-            mail(email)
-
-          elif line.find("ADD")>-1:
-            first=line.split(" ")
-            second=first[2].split(":")
-            info[0]=first[1] +" "+ second[0].replace("\r\n","")
-            info[1]=second[1].replace("\r\n","")
-            add(info)
-
-          elif line.find("INIT")>-1:
-            init()
-
-          elif line.find("TEST")>-1:
-            test()
-
-          elif line.find("QUIT")>-1:
-            pass
-
-          elif line.find("SPEAK")>-1:
-            Speak()
-
-          elif line.find("LASTCALL")>-1:
-            LastCall()           
-
-          elif line.find("REPORT")>-1:
-            Report()            
-
-          elif line.find("HELP")>-1:
-            Help()
-
-          line=line.replace("\r\r\n","\r\n")
-          if line2 != line and line !="\n":  
-            print(line)
-            # TextEdit.moveCursor(window,QTextCursor.End)
-            window.plainTextEdit.insertPlainText(line)
-          else:
-            pass
-        # last_work_time = now
-    except KeyboardInterrupt:
-        sys.exit()
-    except smtplib.SMTPAuthenticationError:
-        print("ERROR: Username or Password are not accepted")
-    except Exception as e:
-      print(str(e))
 
     
 class MainWindow(QWidget, Ui_Form):
@@ -400,7 +369,8 @@ class MainWindow(QWidget, Ui_Form):
         super(MainWindow, self).__init__()
         self.setupUi(self)
         self.plainTextEdit.installEventFilter(self)
-        self.LastCall_Button.clicked.connect(LastCall)
+        dotext=True
+        self.LastCall_Button.clicked.connect(LastCall_Click)
         self.Speak_Button.clicked.connect(Speak)
         self.Report_Button.clicked.connect(Report)
         self.Init_Button.clicked.connect(init)
@@ -432,38 +402,6 @@ if __name__=="__main__":
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     app= QApplication(sys.argv)
     
-    if (len(scan) == 0):
-       dev  = '/dev/ttyUSB*'
-       scan = glob.glob(dev)
-       if (len(scan) == 0):
-           dev  = 'COM*'
-           scan = glob.glob(dev)
-           if (len(scan) == 0):
-                print("Unable to find any ports scanning for /dev/[ttyACM*|ttyUSB*]" + dev) 
-                sys.exit()
-            
-    serport = scan
-
-    if (len(sys.argv) > 1):
-            l = len(sys.argv) - 1
-            while(l>0):
-                if (sys.argv[l][0] == 'C'): serport = sys.argv[l]
-                else:                       rate    = sys.argv[l]
-                l = l - 1
-
-    if serport == "COM":     
-            for n in range(1,20):
-                try:
-                    serport="COM"+str(n)
-                    ser = serial.Serial(port=serport,baudrate=rate,parity=serial.PARITY_NONE,stopbits=serial.STOPBITS_ONE,bytesize=serial.EIGHTBITS,timeout=1)
-                    print("connected to: " + ser.portstr)
-                    s(ser)
-                    break
-                except:
-                    pass
-    else:
-        ser = serial.Serial(port=serport,baudrate=rate,parity=serial.PARITY_NONE,stopbits=serial.STOPBITS_ONE,bytesize=serial.EIGHTBITS,timeout=1)
-
     if not os.path.isfile('CallerID.db'):
 
             con = sqlite3.connect('CallerID.db')
@@ -514,4 +452,3 @@ if __name__=="__main__":
     window.show()
 
     sys.exit(app.exec())
-
