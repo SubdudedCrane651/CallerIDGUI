@@ -5,7 +5,7 @@ a = Analysis(
     ['CallerID4.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('icon.ico', 'icon.ico')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -20,7 +20,7 @@ exe = EXE(
     pyz,
     a.scripts,
     a.binaries,
-    a.datas,
+    a.datas ,
     [],
     name='CallerID4',
     debug=False,
@@ -35,4 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=['icon.ico'],
 )

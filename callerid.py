@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'callerid.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.3
+## Created by: Qt User Interface Compiler version 6.8.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -23,6 +23,9 @@ class Ui_Form(object):
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.resize(770, 622)
+        icon = QIcon()
+        icon.addFile(u"icon.ico", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        Form.setWindowIcon(icon)
         self.plainTextEdit = QPlainTextEdit(Form)
         self.plainTextEdit.setObjectName(u"plainTextEdit")
         self.plainTextEdit.setGeometry(QRect(0, 30, 781, 601))

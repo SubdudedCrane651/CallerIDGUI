@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QApplication, QWidget,QPushButton,QPlainTextEdit
 from PySide6.QtCore import QFile
 from callerid import Ui_Form
 from PySide6 import QtCore, QtGui
-from PySide6.QtGui import QTextCursor
+from PySide6.QtGui import QTextCursor,QIcon
 import sys
 import signal
 import smtplib
@@ -368,6 +368,7 @@ class MainWindow(QWidget, Ui_Form):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
+        self.setWindowIcon(QIcon('icon.ico'))
         self.plainTextEdit.installEventFilter(self)
         dotext=True
         self.LastCall_Button.clicked.connect(LastCall_Click)
