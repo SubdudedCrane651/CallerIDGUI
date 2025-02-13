@@ -6,6 +6,7 @@ import queue
 import serial,glob,os
 from PySide6.QtWidgets import QApplication, QWidget,QPushButton,QPlainTextEdit
 from PySide6.QtCore import QFile
+#created with qtdeveloper
 from callerid import Ui_Form
 from PySide6 import QtCore, QtGui
 from PySide6.QtGui import QTextCursor,QIcon
