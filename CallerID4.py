@@ -305,8 +305,8 @@ def CreateHtml():
         )
 
     cur1 = con1.cursor()
-    cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
-    row = cur1.fetchone()
+    cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 50")
+    rows = cur1.fetchall()
      
     html = "<!DOCTYPE html>"
     html += "<html xmlns =\"http://www.w3.org/1999/xhtml\">"
@@ -334,7 +334,7 @@ def CreateHtml():
 
     DoBkgrnd = True
 
-    if row:
+    for row in rows:
       name=str(row[1])
       phonenumber=str(row[2])
       calldate=str(row[3])
@@ -365,7 +365,7 @@ def CreateHtml():
     html += "</body>"
     html += "</html>"
     
-    con.close()
+    con1.close()
 
     with open('CallerID.html','w+',encoding='utf-8') as File:
       File.write(html)

@@ -27,17 +27,14 @@ def View():
     )
 
     cur1 = con1.cursor()
-    cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC")
-    row = cur1.fetchone()  
-
-    if row:
-
-        #print(row) 
-
-        tree.insert("", tk.END, values=row)        
+    cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 20")
+    rows = cur1.fetchall()  
 
     con1.close()
 
+    for row in rows:
+
+        tree.insert("", tk.END, values=row)        
 
 # connect to the database
 
