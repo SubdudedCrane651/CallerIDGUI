@@ -4,17 +4,33 @@ import tkinter as tk
 
 import sqlite3
 
+import json
+import mysql.connector
+
+def load_mysql_config(path="config.json"):
+    with open(path, "r") as file:
+        data = json.load(file)
+        return data["mysql"]
+
 def View():
 
-    con1 = sqlite3.connect("CallerID.db")
+   # Load MySQL config from JSON
+    config = load_mysql_config()
+
+    # Connect to MySQL
+    con1 = mysql.connector.connect(
+        host=config["host"],
+        user=config["user"],
+        password=config["password"],
+        database=config["database"],
+        port=config.get("port", 3306)
+    )
 
     cur1 = con1.cursor()
-
     cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC")
+    row = cur1.fetchone()  
 
-    rows = cur1.fetchall()    
-
-    for row in rows:
+    if row:
 
         #print(row) 
 

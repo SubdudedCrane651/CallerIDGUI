@@ -292,9 +292,21 @@ def CreateHtml():
     
     html=""
 
-    con = sqlite3.connect('CallerID.db')
+    # Load MySQL config from JSON
+    config = load_mysql_config()
 
-    corsur = con.execute("SELECT * FROM phonecalls ORDER BY ID DESC")
+        # Connect to MySQL
+    con1 = mysql.connector.connect(
+            host=config["host"],
+            user=config["user"],
+            password=config["password"],
+            database=config["database"],
+            port=config.get("port", 3306)
+        )
+
+    cur1 = con1.cursor()
+    cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
+    row = cur1.fetchone()
      
     html = "<!DOCTYPE html>"
     html += "<html xmlns =\"http://www.w3.org/1999/xhtml\">"
@@ -322,7 +334,7 @@ def CreateHtml():
 
     DoBkgrnd = True
 
-    for row in corsur:
+    if row:
       name=str(row[1])
       phonenumber=str(row[2])
       calldate=str(row[3])
@@ -411,8 +423,6 @@ def CheckCalls(line):
         datetime[1]=datetime[0] 
     except:
       pass    
-    
-
     
 class MainWindow(QWidget, Ui_Form):
     def __init__(self):
