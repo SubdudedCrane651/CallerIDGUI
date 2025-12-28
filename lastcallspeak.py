@@ -10,24 +10,41 @@ import time
 # This module is imported so that we can
 # play the converted audio
 import os
+import json
+import mysql.connector
+
 # The text that you want to convert to audio
 mytext=""
 name=""
 phonenumber=""
 
-con1 = sqlite3.connect("CallerID.db")
+def load_mysql_config(path="config.json"):
+    with open(path, "r") as file:
+        data = json.load(file)
+        return data["mysql"]
+
+# Load MySQL config from JSON
+config = load_mysql_config()
+
+    # Connect to MySQL
+con1 = mysql.connector.connect(
+        host=config["host"],
+        user=config["user"],
+        password=config["password"],
+        database=config["database"],
+        port=config.get("port", 3306)
+    )
 
 cur1 = con1.cursor()
-
 cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
+row = cur1.fetchone()
 
-rows = cur1.fetchall()    
+name = phonenumber = dateandtime = ""
 
-for row in rows:
-    name=str(row[1])
-    phonenumber=str(row[2])
-
-        #print(row) 
+if row:
+        name = str(row[1])
+        phonenumber = str(row[2])
+        dateandtime = str(row[3])
 
 con1.close()
 

@@ -15,6 +15,31 @@ import signal
 import smtplib
 import sqlite3
 from datetime import datetime
+import json
+import mysql.connector
+
+# Load MySQL parameters from JSON file
+def load_mysql_config(path="config.json"):
+    with open(path, "r") as file:
+        data = json.load(file)
+        return data["mysql"]
+
+# Example usage
+config = load_mysql_config()
+
+# Connect to MySQL
+connection = mysql.connector.connect(
+    host=config["host"],
+    user=config["user"],
+    password=config["password"],
+    database=config["database"],
+    port=config.get("port", 3306)  # default to 3306 if missing
+)
+
+print("Connected to MySQL successfully")
+
+# Always close when done
+connection.close()
 
 dev = "COM"
 #dev  = "/dev/ttyACM*"
@@ -188,48 +213,72 @@ def add(info):
   print("\n"+info[0]+" with "+info[1]+" added to checknumbers\n")
   
 
-def  LastCall(dotext):
+def load_mysql_config(path="config.json"):
+    with open(path, "r") as file:
+        data = json.load(file)
+        return data["mysql"]
 
-      con1 = sqlite3.connect("CallerID.db")
+def LastCall(dotext):
 
-      cur1 = con1.cursor()
+    # Load MySQL config from JSON
+    config = load_mysql_config()
 
-      cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
+    # Connect to MySQL
+    con1 = mysql.connector.connect(
+        host=config["host"],
+        user=config["user"],
+        password=config["password"],
+        database=config["database"],
+        port=config.get("port", 3306)
+    )
 
-      rows = cur1.fetchall()    
+    cur1 = con1.cursor()
+    cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
+    row = cur1.fetchone()
 
-      for row in rows:
-          name=str(row[1])
-          phonenumber=str(row[2])
-          dateandtime=str(row[3])
+    name = phonenumber = dateandtime = ""
 
-      con1.close()
+    if row:
+        name = str(row[1])
+        phonenumber = str(row[2])
+        dateandtime = str(row[3])
 
-      if dotext:
+    con1.close()
 
-          text="Appel de "+name+" au "+phonenumber+" le "+dateandtime+"\n"+"\n"
-          window.plainTextEdit.insertPlainText(text)
-          cursor = window.plainTextEdit.textCursor()
-          cursor.movePosition(QTextCursor.MoveOperation.End)
-          window.plainTextEdit.setTextCursor(cursor) 
+    if dotext:
+        text = (
+            "Appel de " + name +
+            " au " + phonenumber +
+            " le " + dateandtime + "\n\n"
+        )
+        window.plainTextEdit.insertPlainText(text)
+        cursor = window.plainTextEdit.textCursor()
+        cursor.movePosition(QTextCursor.MoveOperation.End)
+        window.plainTextEdit.setTextCursor(cursor)
 
-      return name,phonenumber,dateandtime
-
+    return name, phonenumber, dateandtime
 
 def  LastCall_Click():
 
-        con1 = sqlite3.connect("CallerID.db")
+        # Load MySQL config from JSON
+        config = load_mysql_config()
+
+        # Connect to MySQL
+        con1 = mysql.connector.connect(
+            host=config["host"],
+            user=config["user"],
+            password=config["password"],
+            database=config["database"],
+            port=config.get("port", 3306)
+        )
 
         cur1 = con1.cursor()
-
         cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
+        row = cur1.fetchone()
 
-        rows = cur1.fetchall()    
-
-        for row in rows:
-            name=str(row[1])
-            phonenumber=str(row[2])
-            dateandtime=str(row[3])
+        name=str(row[1])
+        phonenumber=str(row[2])
+        dateandtime=str(row[3])
 
         con1.close()
 
