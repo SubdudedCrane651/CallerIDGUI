@@ -14,27 +14,43 @@ def load_mysql_config(path="config.json"):
 
 def View():
 
-   # Load MySQL config from JSON
-    config = load_mysql_config()
+        # Load MySQL config from JSON
+        config = load_mysql_config()
 
-    # Connect to MySQL
-    con1 = mysql.connector.connect(
-        host=config["host"],
-        user=config["user"],
-        password=config["password"],
-        database=config["database"],
-        port=config.get("port", 3306)
-    )
+        if config["host"] == "SQLite":
+           SQLite=True
+        else:
+           SQLite=False   
 
-    cur1 = con1.cursor()
-    cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 20")
-    rows = cur1.fetchall()  
+        if SQLite:
+    
+          con = sqlite3.connect('CallerID.db')
 
-    con1.close()
+          rows = con.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 20")
 
-    for row in rows:
+        else:        
 
-        tree.insert("", tk.END, values=row)        
+            # Connect to MySQL
+            con1 = mysql.connector.connect(
+                host=config["host"],
+                user=config["user"],
+                password=config["password"],
+                database=config["database"],
+                port=config.get("port", 3306)
+            )
+
+            cur1 = con1.cursor()
+            cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 20")
+            rows = cur1.fetchall()  
+
+        for row in rows:
+
+            tree.insert("", tk.END, values=row)
+
+        if SQLite:
+            con.close()
+        else:
+            con1.close()
 
 # connect to the database
 

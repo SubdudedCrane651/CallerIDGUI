@@ -26,18 +26,36 @@ def load_mysql_config(path="config.json"):
 # Load MySQL config from JSON
 config = load_mysql_config()
 
-    # Connect to MySQL
-con1 = mysql.connector.connect(
-        host=config["host"],
-        user=config["user"],
-        password=config["password"],
-        database=config["database"],
-        port=config.get("port", 3306)
-    )
+if config["host"] == "SQLite":
+      SQLite=True
+else:
+      SQLite=False  
 
-cur1 = con1.cursor()
-cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
-row = cur1.fetchone()
+if SQLite:
+    
+          con = sqlite3.connect('CallerID.db')
+
+          corsur = con.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
+
+          for row in corsur:
+            name = str(row[1])
+            phonenumber = str(row[2])
+            dateandtime = str(row[3])
+
+else:        
+
+            # Connect to MySQL
+            con1 = mysql.connector.connect(
+                host=config["host"],
+                user=config["user"],
+                password=config["password"],
+                database=config["database"],
+                port=config.get("port", 3306)
+            )
+
+            cur1 = con1.cursor()
+            cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
+            row = cur1.fetchone()  
 
 name = phonenumber = dateandtime = ""
 
@@ -46,8 +64,10 @@ if row:
         phonenumber = str(row[2])
         dateandtime = str(row[3])
 
-con1.close()
-
+if SQLite:
+      con.close()
+else:
+      con1.close() 
 #mytext = "Call from "+name+" at "+phonenumber
 mytext = "Appel de "+name+" au "+phonenumber
 # Language in which you want to convert

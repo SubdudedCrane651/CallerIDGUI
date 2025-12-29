@@ -24,23 +24,6 @@ def load_mysql_config(path="config.json"):
         data = json.load(file)
         return data["mysql"]
 
-# Example usage
-config = load_mysql_config()
-
-# Connect to MySQL
-connection = mysql.connector.connect(
-    host=config["host"],
-    user=config["user"],
-    password=config["password"],
-    database=config["database"],
-    port=config.get("port", 3306)  # default to 3306 if missing
-)
-
-print("Connected to MySQL successfully")
-
-# Always close when done
-connection.close()
-
 dev = "COM"
 #dev  = "/dev/ttyACM*"
 #scan = glob.glob(dev)
@@ -219,31 +202,54 @@ def load_mysql_config(path="config.json"):
         return data["mysql"]
 
 def LastCall(dotext):
-
+    
     # Load MySQL config from JSON
     config = load_mysql_config()
 
-    # Connect to MySQL
-    con1 = mysql.connector.connect(
-        host=config["host"],
-        user=config["user"],
-        password=config["password"],
-        database=config["database"],
-        port=config.get("port", 3306)
-    )
+    if config["host"] == "SQLite":
+       SQLite=True
+    else:
+       SQLite=False
+    
+    if SQLite:
+    
+      con = sqlite3.connect('CallerID.db')
 
-    cur1 = con1.cursor()
-    cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
-    row = cur1.fetchone()
+      corsur = con.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
 
-    name = phonenumber = dateandtime = ""
-
-    if row:
+      for row in corsur:
         name = str(row[1])
         phonenumber = str(row[2])
         dateandtime = str(row[3])
 
-    con1.close()
+      con.close() 
+
+    else:        
+
+      # Load MySQL config from JSON
+      config = load_mysql_config()
+
+      # Connect to MySQL
+      con1 = mysql.connector.connect(
+          host=config["host"],
+          user=config["user"],
+          password=config["password"],
+          database=config["database"],
+          port=config.get("port", 3306)
+      )
+
+      cur1 = con1.cursor()
+      cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
+      row = cur1.fetchone()
+
+      name = phonenumber = dateandtime = ""
+
+      if row:
+          name = str(row[1])
+          phonenumber = str(row[2])
+          dateandtime = str(row[3])
+
+      con1.close()
 
     if dotext:
         text = (
@@ -259,28 +265,48 @@ def LastCall(dotext):
     return name, phonenumber, dateandtime
 
 def  LastCall_Click():
-
+        
         # Load MySQL config from JSON
         config = load_mysql_config()
 
-        # Connect to MySQL
-        con1 = mysql.connector.connect(
-            host=config["host"],
-            user=config["user"],
-            password=config["password"],
-            database=config["database"],
-            port=config.get("port", 3306)
-        )
+        if config["host"] == "SQLite":
+           SQLite=True
+        else:
+           SQLite=False   
 
-        cur1 = con1.cursor()
-        cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
-        row = cur1.fetchone()
+        if SQLite:
+    
+          con = sqlite3.connect('CallerID.db')
+
+          corsur = con.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
+
+          for row in corsur:
+            name = str(row[1])
+            phonenumber = str(row[2])
+            dateandtime = str(row[3])
+
+          con.close() 
+
+        else:        
+
+          # Connect to MySQL
+          con1 = mysql.connector.connect(
+              host=config["host"],
+              user=config["user"],
+              password=config["password"],
+              database=config["database"],
+              port=config.get("port", 3306)
+          )
+
+          cur1 = con1.cursor()
+          cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
+          row = cur1.fetchone()
+
+          con1.close()
 
         name=str(row[1])
         phonenumber=str(row[2])
         dateandtime=str(row[3])
-
-        con1.close()
 
         text="Appel de "+name+" au "+phonenumber+" le "+dateandtime+"\n"+"\n"
         window.plainTextEdit.insertPlainText(text)
@@ -291,22 +317,35 @@ def  LastCall_Click():
 def CreateHtml():
     
     html=""
-
+    
     # Load MySQL config from JSON
     config = load_mysql_config()
 
-        # Connect to MySQL
-    con1 = mysql.connector.connect(
-            host=config["host"],
-            user=config["user"],
-            password=config["password"],
-            database=config["database"],
-            port=config.get("port", 3306)
-        )
+    if config["host"] == "SQLite":
+          SQLite=True
+    else:
+          SQLite=False  
 
-    cur1 = con1.cursor()
-    cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 50")
-    rows = cur1.fetchall()
+    if SQLite:
+        
+              con = sqlite3.connect('CallerID.db')
+
+              rows = con.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 50")
+
+    else:        
+
+                # Connect to MySQL
+                con1 = mysql.connector.connect(
+                    host=config["host"],
+                    user=config["user"],
+                    password=config["password"],
+                    database=config["database"],
+                    port=config.get("port", 3306)
+                )
+
+                cur1 = con1.cursor()
+                cur1.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 50")
+                rows = cur1.fetchall() 
      
     html = "<!DOCTYPE html>"
     html += "<html xmlns =\"http://www.w3.org/1999/xhtml\">"
@@ -365,7 +404,10 @@ def CreateHtml():
     html += "</body>"
     html += "</html>"
     
-    con1.close()
+    if SQLite:
+      con.close()
+    else:
+      con1.close() 
 
     with open('CallerID.html','w+',encoding='utf-8') as File:
       File.write(html)
