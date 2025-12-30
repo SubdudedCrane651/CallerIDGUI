@@ -314,6 +314,22 @@ def  LastCall_Click():
         cursor.movePosition(QTextCursor.MoveOperation.End)
         window.plainTextEdit.setTextCursor(cursor) 
 
+import os, platform, subprocess, webbrowser
+
+def open_html(path):
+    system = platform.system()
+
+    if system == "Windows":
+        os.startfile(path)
+    elif system == "Darwin":  # macOS
+        subprocess.call(["open", path])
+    elif system == "Linux":
+        subprocess.call(["xdg-open", path])
+    else:
+        webbrowser.open(path)
+
+
+
 def CreateHtml():
     
     html=""
@@ -414,10 +430,10 @@ def CreateHtml():
 
     text="""CallerID.html created just click on file to view\n\n"""
     window.plainTextEdit.insertPlainText(text)
-    import os
     base = os.path.dirname(os.path.abspath(__file__))
     html_path = os.path.join(base, "CallerID.html")
-    os.startfile("CallerID.html")
+    #os.startfile("CallerID.html")
+    open_html("CallerID.html")
     cursor = window.plainTextEdit.textCursor()
     cursor.movePosition(QTextCursor.MoveOperation.End)
     window.plainTextEdit.setTextCursor(cursor)   
