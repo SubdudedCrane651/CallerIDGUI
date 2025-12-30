@@ -414,6 +414,10 @@ def CreateHtml():
 
     text="""CallerID.html created just click on file to view\n\n"""
     window.plainTextEdit.insertPlainText(text)
+    import os
+    base = os.path.dirname(os.path.abspath(__file__))
+    html_path = os.path.join(base, "CallerID.html")
+    os.startfile("CallerID.html")
     cursor = window.plainTextEdit.textCursor()
     cursor.movePosition(QTextCursor.MoveOperation.End)
     window.plainTextEdit.setTextCursor(cursor)   
