@@ -69,7 +69,7 @@ if SQLite:
 else:
       con1.close() 
 #mytext = "Call from "+name+" at "+phonenumber
-mytext = "Appel de "+name+" au "+phonenumber
+mytext = "Appel de "+phonenumber+" au "+name
 # Language in which you want to convert
 language = 'fr'
 

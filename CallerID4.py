@@ -308,7 +308,7 @@ def  LastCall_Click():
         phonenumber=str(row[2])
         dateandtime=str(row[3])
 
-        text="Appel de "+name+" au "+phonenumber+" le "+dateandtime+"\n"+"\n"
+        text="Appel de "+phonenumber+" au "+name+" le "+dateandtime+"\n"+"\n"
         window.plainTextEdit.insertPlainText(text)
         cursor = window.plainTextEdit.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
