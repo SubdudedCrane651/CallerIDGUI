@@ -7,7 +7,7 @@ import serial,glob,os
 from PySide6.QtWidgets import QApplication, QWidget,QPushButton,QPlainTextEdit
 from PySide6.QtCore import QFile
 #created with qtdeveloper
-from callerid import Ui_Form
+from callerid2 import Ui_Form
 from PySide6 import QtCore, QtGui
 from PySide6.QtGui import QTextCursor,QIcon
 import sys
@@ -496,8 +496,8 @@ class MainWindow(QWidget, Ui_Form):
         self.LastCall_Button.clicked.connect(LastCall_Click)
         self.Speak_Button.clicked.connect(Speak)
         self.Report_Button.clicked.connect(Report)
-        self.Init_Button.clicked.connect(init)
-        self.Help_Button.clicked.connect(Help)
+        #self.Init_Button.clicked.connect(init)
+        #self.Help_Button.clicked.connect(Help)
 
     def eventFilter(self,obj,event):
         global line
