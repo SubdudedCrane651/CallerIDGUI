@@ -60,16 +60,21 @@ else:
 name = phonenumber = dateandtime = ""
 
 if row:
-        name = str(row[1])
-        phonenumber = str(row[2])
-        dateandtime = str(row[3])
+  if SQLite:
+     name=str(row[1])
+     phonenumber=str(row[2])
+     datetime=str(row[3])
+  else:
+     name=str(row[2])
+     phonenumber=str(row[1])
+     datetime=str(row[3])  
 
 if SQLite:
       con.close()
 else:
       con1.close() 
 #mytext = "Call from "+name+" at "+phonenumber
-mytext = "Appel de "+phonenumber+" au "+name
+mytext = "Appel de "+name+" au "+phonenumber
 # Language in which you want to convert
 language = 'fr'
 

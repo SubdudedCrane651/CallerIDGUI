@@ -278,12 +278,17 @@ def  LastCall_Click():
     
           con = sqlite3.connect('CallerID.db')
 
-          corsur = con.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
+          cursor = con.execute("SELECT * FROM phonecalls ORDER BY ID DESC LIMIT 1")
 
-          for row in corsur:
-            name = str(row[1])
-            phonenumber = str(row[2])
-            dateandtime = str(row[3])
+          for row in cursor:
+            if SQLite:
+              name=str(row[1])
+              phonenumber=str(row[2])
+              calldate=str(row[3])
+            else:
+              name=str(row[2])
+              phonenumber=str(row[1])
+              calldate=str(row[3])  
 
           con.close() 
 
@@ -303,12 +308,17 @@ def  LastCall_Click():
           row = cur1.fetchone()
 
           con1.close()
+        
+        if SQLite:
+          name=str(row[1])
+          phonenumber=str(row[2])
+          calldate=str(row[3])
+        else:
+          name=str(row[2])
+          phonenumber=str(row[1])
+          calldate=str(row[3])  
 
-        name=str(row[2])
-        phonenumber=str(row[1])
-        dateandtime=str(row[3])
-
-        text="Appel de "+name+" au "+phonenumber+" le "+dateandtime+"\n"+"\n"
+        text="Appel de "+name+" au "+phonenumber+" le "+calldate+"\n"+"\n"
         window.plainTextEdit.insertPlainText(text)
         cursor = window.plainTextEdit.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
@@ -390,9 +400,14 @@ def CreateHtml():
     DoBkgrnd = True
 
     for row in rows:
-      name=str(row[1])
-      phonenumber=str(row[2])
-      calldate=str(row[3])
+      if SQLite:
+        name=str(row[1])
+        phonenumber=str(row[2])
+        calldate=str(row[3])
+      else:
+        name=str(row[2])
+        phonenumber=str(row[1])
+        calldate=str(row[3])  
 
       if (DoBkgrnd):
 

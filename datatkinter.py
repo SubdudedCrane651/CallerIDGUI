@@ -66,11 +66,28 @@ tree.heading("#1", text="ID")
 
 tree.column("#2", anchor=tk.CENTER)
 
-tree.heading("#2", text="NAME")
+config = load_mysql_config()
 
-tree.column("#3", anchor=tk.CENTER)
+if config["host"] == "SQLite":
+    SQLite=True
+else:
+    SQLite=False  
 
-tree.heading("#3", text="PHONENUMBER")
+if SQLite:
+
+    tree.heading("#2", text="NAME")
+
+    tree.column("#3", anchor=tk.CENTER)
+
+    tree.heading("#3", text="PHONENUMBER")
+
+else:
+
+    tree.heading("#2", text="PHONENUMBER")
+
+    tree.column("#3", anchor=tk.CENTER)
+
+    tree.heading("#3", text="NAME")
 
 tree.column("#4", anchor=tk.CENTER)
 
