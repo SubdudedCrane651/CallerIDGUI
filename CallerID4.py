@@ -448,10 +448,6 @@ def CreateHtml():
     base = os.path.dirname(os.path.abspath(__file__))
     html_path = os.path.join(base, "CallerID.html")
     #os.startfilopen_htmle("CallerID.html")
-    from PySide6.QtCore import QTimer
-
-    QTimer.singleShot(0, lambda: open_html("CallerID.html"))
-
     print("Opening CallerID.html")
     cursor = window.plainTextEdit.textCursor()
     cursor.movePosition(QTextCursor.MoveOperation.End)
@@ -479,10 +475,18 @@ def Speak():
    sys.modules.pop('lastcallspeak')
    LastCall(True)
 
-def Report():
+from PySide6.QtCore import QTimer
+
+def Report(): 
    import datatkinter
-   sys.modules.pop('datatkinter')
-   CreateHtml()
+
+   #sys.modules.pop('datatkinter')
+   #subprocess.Popen(["python", "datatkinter.py"])
+   CreateHtml() # Run HTML opening on the Qt main thread
+
+   QTimer.singleShot(0, lambda: open_html("CallerID.html"))
+
+   #QTimer.singleShot(0, lambda: LastCall_Click())
           
 def CheckCalls(line):
   print(line.find("QUIT"))
