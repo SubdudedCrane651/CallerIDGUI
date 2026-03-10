@@ -259,6 +259,7 @@ def LastCall(dotext):
         )
         window.plainTextEdit.insertPlainText(text)
         cursor = window.plainTextEdit.textCursor()
+        print(text)
         cursor.movePosition(QTextCursor.MoveOperation.End)
         window.plainTextEdit.setTextCursor(cursor)
 
@@ -320,6 +321,7 @@ def  LastCall_Click():
 
         text="Appel de "+name+" au "+phonenumber+" le "+calldate+"\n"+"\n"
         window.plainTextEdit.insertPlainText(text)
+        print(text)
         cursor = window.plainTextEdit.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
         window.plainTextEdit.setTextCursor(cursor) 
@@ -337,8 +339,6 @@ def open_html(path):
         subprocess.call(["xdg-open", path])
     else:
         webbrowser.open(path)
-
-
 
 def CreateHtml():
     
@@ -447,12 +447,11 @@ def CreateHtml():
     window.plainTextEdit.insertPlainText(text)
     base = os.path.dirname(os.path.abspath(__file__))
     html_path = os.path.join(base, "CallerID.html")
-    #os.startfile("CallerID.html")
-    open_html("CallerID.html")
+    #os.startfilopen_htmle("CallerID.html")
+    print("Opening CallerID.html")
     cursor = window.plainTextEdit.textCursor()
     cursor.movePosition(QTextCursor.MoveOperation.End)
     window.plainTextEdit.setTextCursor(cursor)   
-
 
 def Help():
    text="""  test -   To test the program
@@ -476,10 +475,18 @@ def Speak():
    sys.modules.pop('lastcallspeak')
    LastCall(True)
 
-def Report():
+from PySide6.QtCore import QTimer
+
+def Report(): 
    import datatkinter
-   sys.modules.pop('datatkinter')
-   CreateHtml()
+
+   #sys.modules.pop('datatkinter')
+   #subprocess.Popen(["python", "datatkinter.py"])
+   CreateHtml() # Run HTML opening on the Qt main thread
+
+   QTimer.singleShot(0, lambda: open_html("CallerID.html"))
+
+   #QTimer.singleShot(0, lambda: LastCall_Click())
           
 def CheckCalls(line):
   print(line.find("QUIT"))
@@ -494,6 +501,7 @@ def CheckCalls(line):
       if datetime[0] != datetime[1]:
         text="Appel de "+name+" au "+phonenumber+" le "+str(datetime[0])+"\n\n"
         window.plainTextEdit.insertPlainText(text)
+        print(text)
         cursor = window.plainTextEdit.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
         window.plainTextEdit.setTextCursor(cursor)
