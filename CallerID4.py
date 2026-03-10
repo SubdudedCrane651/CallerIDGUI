@@ -473,6 +473,7 @@ def Help():
 def Speak():
    import lastcallspeak
    sys.modules.pop('lastcallspeak')
+     # Delete after playback
    LastCall(True)
 
 from PySide6.QtCore import QTimer

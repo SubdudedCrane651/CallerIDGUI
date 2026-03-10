@@ -2,7 +2,7 @@
 from email.mime import audio
 import sys
 # sys.path.append("c:\users\rchrd\appdata\local\packages\pythonsoftwarefoundation.python.3.9_qbz5n2kfra8p0\localcache\local-packages\python39\site-packages")
-from gtts import gTTS
+from gtts import gTTS, tts
 #pip install playsound==1.2.2
 #from playsound import playsound
 import pygame
@@ -13,6 +13,8 @@ import time
 import os
 import json
 import mysql.connector
+import time
+
 
 # The text that you want to convert to audio
 mytext=""
@@ -83,20 +85,36 @@ language = 'fr'
 # here we have marked slow=False. Which tells
 # the module that the converted audio should
 # have a high speed
-if mytext !="":
-  myobj = gTTS(text=mytext, lang=language, slow=False)
 
 # Saving the converted audio in a mp3 file named
 # welcome
-  audio_file = "call.mp3"
-  try:
-    os.remove(audio_file)
-  except:
-    pass
-  myobj.save(audio_file)
-# Playing the converted file
-  # audio_file = os.path.dirname(__file__) + "\call.mp3"
+audio_file = "call.mp3"
+  # Remove old file if it exists and is not locked
+# Remove old file if it exists
+
+# Generate new audio
+if mytext !="":
+  myobj = gTTS(text=mytext, lang=language, slow=False)
+  time.sleep(0.10)  # Wait a bit before trying again
+  myobj.save(audio_file)  
+
+  # Play audio
   pygame.mixer.init()
   pygame.mixer.music.load(audio_file)
   pygame.mixer.music.play()
-  #playsound(audio_file,True)
+  # Wait for playback to finish
+  while pygame.mixer.music.get_busy():
+        time.sleep(0.1)
+
+    # RELEASE THE FILE LOCK
+  pygame.mixer.music.stop()
+  pygame.mixer.quit()
+
+    # Now safe to delete
+  for _ in range(20):
+        try:
+            os.remove(audio_file)
+            break
+        except PermissionError:
+            time.sleep(0.1)
+
