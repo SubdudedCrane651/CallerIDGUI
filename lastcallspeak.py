@@ -4,7 +4,8 @@ import sys
 # sys.path.append("c:\users\rchrd\appdata\local\packages\pythonsoftwarefoundation.python.3.9_qbz5n2kfra8p0\localcache\local-packages\python39\site-packages")
 from gtts import gTTS
 #pip install playsound==1.2.2
-from playsound import playsound
+#from playsound import playsound
+import pygame
 import sqlite3
 import time
 # This module is imported so that we can
@@ -95,4 +96,7 @@ if mytext !="":
   myobj.save(audio_file)
 # Playing the converted file
   # audio_file = os.path.dirname(__file__) + "\call.mp3"
-  playsound(audio_file,True)
+  pygame.mixer.init()
+  pygame.mixer.music.load(audio_file)
+  pygame.mixer.music.play()
+  #playsound(audio_file,True)

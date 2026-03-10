@@ -1,3 +1,5 @@
 serial
 PySide6
 mysql-connector-python
+gtts
+pygame
